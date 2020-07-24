@@ -6,6 +6,7 @@ module.exports = function (app, router) {
         const mode = req.query.mode;
         const userId = req.query.userId || 0;
         const response = engine().predict(mode, userId);
+	console.log(req.query);
         if (response && response.prediction && response.prediction.data) {
             response.prediction.data = Buffer.from(response.prediction.data).toString('base64');
         }
@@ -15,6 +16,7 @@ module.exports = function (app, router) {
         const mode = req.query.mode;
         let feedback = req.query.feedback;
         const userId = req.query.userId || 0;
+	console.log(req.query);
         feedback = Buffer.from(decodeURIComponent(feedback || "") || "", 'base64').toString('ascii');
         const response = engine().feedback(mode, feedback, userId);
         return res.json(response);

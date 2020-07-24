@@ -121,13 +121,15 @@ function AIEngine() {
     function recordFeedbackAlpha(pText, pActual, pData, userId) {
         var myPerceptron = getPerceptron('alpha');
         var myTrainer = new Trainer(myPerceptron);
-        myTrainer.train([{ input: pData.split("|"), output: getAlphaConfidenceList(pActual) }]);
+	console.log("input: ",pData.split("|").map((item)=> +item),"confidenceList",getAlphaConfidenceList(pActual) );
+        myTrainer.train([{ input: pData.split("|").map((item)=> +item), output: getAlphaConfidenceList(pActual) }]);
         saveTrainingData(myPerceptron, 'alpha');
     }
     function recordFeedbackNumber(pText, pActual, pData, userId) {
         var myPerceptron = getPerceptron('number');
         var myTrainer = new Trainer(myPerceptron);
-        myTrainer.train([{ input: pData.split("|"), output: getNumberConfidenceList(pActual) }]);
+	console.log("input: ",pData.split("|").map((item)=> +item), "confidenceList",getNumberConfidenceList(pActual) );
+        myTrainer.train([{ input: pData.split("|").map((item)=> +item), output: getNumberConfidenceList(pActual) }]);
         saveTrainingData(myPerceptron, 'number');
     }
     return {
@@ -164,11 +166,11 @@ function AIEngine() {
             }
         },
         feedback: function (mode, feedback, userId) {
-            //feedback = prediction:actual:time
-            feedback = feedback.split("|");
-            const pText = feedback[0];
-            const pActual = feedback[1];
-            const pData = feedback[2];
+            //feedback = prediction:actual:data
+            feedback = feedback.split(":");
+            const pText = (feedback[0]||"").charAt(0).toUpperCase();
+            const pActual = (feedback[1]||"").charAt(0).toUpperCase();
+            const pData = Buffer.from(decodeURIComponent(feedback[2]|| "") || "", 'base64').toString('ascii');
             if (mode == 'alpha') {
                 recordFeedbackAlpha(pText, pActual, pData, userId);
                 return {
