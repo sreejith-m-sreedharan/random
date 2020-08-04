@@ -1,25 +1,9 @@
-const engine = require('../services/engine');
+const express = require('express');
+const feedbackController = require("../controllers/feedbackController");
+const predictController = require("../controllers/predictController");
+const router = express.Router();
 
-module.exports = function (app, router) {
+router.use("/predict", predictController.predict);
+router.use("/feedback", feedbackController.feedback);
 
-    router.use('/predict', function (req, res, next) {
-        const mode = req.query.mode;
-        const userId = req.query.userId || 0;
-        const response = engine().predict(mode, userId);
-	console.log(req.query);
-        if (response && response.prediction && response.prediction.data) {
-            response.prediction.data = Buffer.from(response.prediction.data).toString('base64');
-        }
-        return res.json(response);
-    });
-    router.use('/feedback', function (req, res, next) {
-        const mode = req.query.mode;
-        let feedback = req.query.feedback;
-        const userId = req.query.userId || 0;
-	console.log(req.query);
-        feedback = Buffer.from(decodeURIComponent(feedback || "") || "", 'base64').toString('ascii');
-        const response = engine().feedback(mode, feedback, userId);
-        return res.json(response);
-    });
-    return router;
-}
+module.exports = router;

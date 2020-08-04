@@ -4,6 +4,6 @@ const express = require('express');
 
 module.exports = function(app){ 
   const router = express.Router();
-  router.use('/random',random(app, router));
+  router.use('/random',random);
   return router;
 }
